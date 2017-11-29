@@ -1,5 +1,5 @@
 using Base.Test
-using SystemLog
+using Syslogs
 
 import Base.Libdl
 
@@ -83,7 +83,7 @@ include("helpers.jl")
 
     @testset "Libc" begin
         info("Libc Tests")
-        SystemLog.openlog("syslog", 0, SystemLog.LOG_USER)
-        SystemLog.closelog()
+        Syslogs.openlog("syslog", 0, Syslogs.LOG_USER)
+        Syslogs.closelog()
     end
 end

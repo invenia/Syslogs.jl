@@ -1,4 +1,4 @@
-module SystemLog
+module Syslogs
 
 export Syslog
 
