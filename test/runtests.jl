@@ -17,7 +17,7 @@ include("helpers.jl")
         test_logs = map(logs) do s
             input = replace(s, r"^<\d+>", "")
             level = last(split(first(split(s, ':'))))
-            (level, input, s * '\0')
+            (level, input, s * "\0")
         end
 
         @testset "UDP" begin
