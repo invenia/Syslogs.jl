@@ -15,15 +15,20 @@ Pkg.clone("https://github.com/invenia/Syslogs.jl")
 Syslogs.jl defines and exports a `Syslog` type which is a subtype of `IO`.
 
 ```julia
+# Create our Syslog IO type which logs to the local syslog daemon via the libc interface.
 io = Syslog()
+
+# Print a log message to syslog of the form "<pri><msg>\0".
 println(io, :info, "Hello World!")
 ```
 
-To log to a remote server you can pass the remote ip address and port to the `Syslog` constructor.
-NOTE: `log` is just and alias for `println` in the case.
+To log to a remote server you can pass the remote ip address and port to the `Syslog` constructor. 
 
 ```julia
+# Create our Syslog IO type which logs to a remote syslog service with the specified `ipaddr` and `port` via TCP.
 io = Syslog(ipaddr, port; tcp=true)
+
+# `log` is just and alias for `println` in this case.
 log(io, :info, "Hello World!")
 ```
 
