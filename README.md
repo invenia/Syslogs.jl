@@ -12,19 +12,39 @@ Pkg.clone("https://github.com/invenia/Syslogs.jl")
 
 ## Usage
 
+Syslogs.jl defines and exports a `Syslog` type which is a subtype of `IO`.
+
 ```julia
 io = Syslog()
 println(io, :info, "Hello World!")
 ```
 
-To log to a remote server you can pass the remote ip address and port to the `Syslog` constructor (e.g., `Syslog(ipaddr, port; tcp=true)`).
+To log to a remote server you can pass the remote ip address and port to the `Syslog` constructor.
+NOTE: `log` is just and alias for `println` in the case.
 
-## Features
+```julia
+io = Syslog(ipaddr, port; tcp=true)
+log(io, :info, "Hello World!")
+```
 
-- Local logging with the syslog libc interface
-- Remote logging via UDP or TCP.
-- Julia interface to the basic libc calls
-- `Syslog` type which is a subtype for `IO` for use in other logging libraries (e.g., Memento.jl)
+Several `IO` methods exist for the `Syslog` type:
+
+```julia
+println(io::Syslogs.Syslog, level::Symbol, msg::String)
+println(io::Syslogs.Syslog, level::AbstractString, msg::AbstractString)
+log(io::Syslogs.Syslog, args...)
+close(io::Syslogs.Syslog)
+flush(io::Syslogs.Syslog)
+```
+
+Syslogs.jl also provides several methods to the [libc interface](https://www.gnu.org/software/libc/manual/html_node/Submitting-Syslog-Messages.html#Submitting-Syslog-Messages):
+
+```julia
+Syslogs.openlog(ident::String, logopt::Integer, facility::Integer)
+Syslogs.syslog(priority::Integer, msg::String)
+Syslogs.closelog()
+Syslogs.makepri(facility::Integer, priority::Integer)   # maps to the LOG_MAKEPRI macro
+```
 
 ## TODO
 

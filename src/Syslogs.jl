@@ -167,13 +167,8 @@ end
 
 Base.log(io::Syslog, args...) = println(io, args...)
 
-"""
-    flush(::Syslog)
-
-Is defined just in case somebody decides to call flush, which is unnecessary.
-"""
 function Base.flush(io::Syslog)
-    if !isnull(io.socket) && isa(io.socket, TCPSocket)
+    if !isnull(io.socket) && isa(get(io.socket), TCPSocket)
         flush(get(io.socket))
     end
 end

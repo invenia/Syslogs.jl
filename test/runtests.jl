@@ -3,6 +3,9 @@ using Syslogs
 
 import Base.Libdl
 
+eval(Syslogs, parse("UDP_PORT = 8080"))
+eval(Syslogs, parse("TCP_PORT = 8080"))
+
 include("helpers.jl")
 
 @testset "Syslog" begin
@@ -20,6 +23,11 @@ include("helpers.jl")
             (level, input, s * "\0")
         end
 
+        @testset "Invalid Stream" begin
+            io = Syslog((ip"127.0.0.1", 8080), :user, BufferStream())
+            @test_throws ArgumentError println(io, :info, "foobar")
+        end
+
         @testset "UDP" begin
             info("UDP Tests")
             @testset "Simple" begin
@@ -35,6 +43,14 @@ include("helpers.jl")
                 @testset "$input" for (level, input, output) in test_logs
                     r = udp_srv(8080)
                     io = Syslog(ip"127.0.0.1", 8080; tcp=false)
+                    info("Sending (UDP): $level, $input")
+                    println(io, level, input)
+                    s = fetch(r)
+                    @test strip(s) == strip(output)
+                    close(io)
+
+                    r = udp_srv(8080)
+                    io = Syslog(ip"127.0.0.1"; tcp=false)
                     info("Sending (UDP): $level, $input")
                     println(io, level, input)
                     s = fetch(r)
@@ -74,6 +90,7 @@ include("helpers.jl")
                 io = Syslog(ip"127.0.0.1", 8080; tcp=true)
                 close(io)
                 log(io, "info", "foobar\n")
+                println(typeof(io.socket))
                 flush(io)
                 close(io)
                 close(serv)
