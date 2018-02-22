@@ -2,7 +2,10 @@ module Syslogs
 
 export Syslog
 
-import Base.Libdl: dlopen
+using Compat.Libdl: dlopen
+using Compat.Printf
+using Compat: Cvoid
+using Nullables
 
 # Default UDP and TCP ports
 const UDP_PORT = 514
@@ -83,12 +86,12 @@ const FACILITIES = Dict(
 )
 
 openlog(ident::String, logopt::Integer, facility::Integer) =
-    ccall((:openlog, "libc"), Void, (Ptr{UInt8}, UInt, UInt), ident, logopt, facility)
+    ccall((:openlog, "libc"), Cvoid, (Ptr{UInt8}, UInt, UInt), ident, logopt, facility)
 
 syslog(priority::Integer, msg::String) =
-    ccall((:syslog, "libc"), Void, (UInt, Ptr{UInt8}), priority, msg)
+    ccall((:syslog, "libc"), Cvoid, (UInt, Ptr{UInt8}), priority, msg)
 
-closelog() = ccall((:closelog, "libc"), Void, ())
+closelog() = ccall((:closelog, "libc"), Cvoid, ())
 
 makepri(facility::Integer, priority::Integer) = (UInt(facility) << 3) | UInt(priority)
 
@@ -109,7 +112,7 @@ mutable struct Syslog <: IO
 end
 
 Syslog(host::IPAddr, port::Int, facility::Symbol=:user; tcp::Bool=false) =
-    Syslog((host, port), facility, tcp ? connect(host, port): UDPSocket())
+    Syslog((host, port), facility, tcp ? connect(host, port) : UDPSocket())
 
 Syslog(host::IPAddr, facility::Symbol=:user; tcp::Bool=false) =
     Syslog(host, tcp ? TCP_PORT : UDP_PORT, facility; tcp=tcp)
