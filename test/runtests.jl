@@ -1,10 +1,13 @@
-using Base.Test
+using Compat.Test
 using Syslogs
 
-import Base.Libdl
+import Compat.Libdl
+using Compat.Distributed
+using Compat: replace
+using Base: BufferStream
 
-eval(Syslogs, parse("UDP_PORT = 8080"))
-eval(Syslogs, parse("TCP_PORT = 8080"))
+eval(Syslogs, Meta.parse("UDP_PORT = 8080"))
+eval(Syslogs, Meta.parse("TCP_PORT = 8080"))
 
 include("helpers.jl")
 
@@ -16,9 +19,9 @@ include("helpers.jl")
     end
 
     @testset "Remote" begin
-        logs = filter(!isempty, split(readstring("scripts/output.log"), "\n\0"))
+        logs = filter(!isempty, split(read("scripts/output.log", String), "\n\0"))
         test_logs = map(logs) do s
-            input = replace(s, r"^<\d+>", "")
+            input = replace(s, r"^<\d+>" => "")
             level = last(split(first(split(s, ':'))))
             (level, input, s * "\0")
         end

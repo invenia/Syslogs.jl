@@ -8,7 +8,7 @@ function udp_srv(port::Int)
     sock = UDPSocket()
     bind(sock, ip"127.0.0.1", port)
 
-    @async begin
+    @schedule begin
         put!(r, String(recv(sock)))
         close(sock)
     end
@@ -20,10 +20,10 @@ function tcp_srv(port::Int)
     r = Future()
 
     server = listen(ip"127.0.0.1", port)
-    @async begin
+    @schedule begin
         while !isready(r)
             sock = accept(server)
-            put!(r, readuntil(sock, '\0'))
+            put!(r, readuntil(sock, '\0'; keep=true))
         end
         close(server)
     end
