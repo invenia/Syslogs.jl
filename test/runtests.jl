@@ -5,13 +5,14 @@ import Compat.Libdl
 using Compat.Distributed
 using Compat: replace
 using Base: BufferStream
+using TestSetExtensions
 
 eval(Syslogs, Meta.parse("UDP_PORT = 8080"))
 eval(Syslogs, Meta.parse("TCP_PORT = 8080"))
 
 include("helpers.jl")
 
-@testset "Syslog" begin
+@testset ExtendedTestSet "Syslog" begin
     @testset "Local" begin
         info("Local Tests")
         io = Syslog()
