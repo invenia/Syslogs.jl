@@ -1,6 +1,7 @@
 using Compat.Test
 using Syslogs
 
+using Sockets
 import Compat.Libdl
 using Compat.Distributed
 using Compat: replace
@@ -39,7 +40,7 @@ include("helpers.jl")
                 io = Syslog(ip"127.0.0.1", 8080; tcp=false)
                 println(io, "info", "foobar")
                 s = fetch(r)
-                @test contains(s, "foobar")
+                @test occursin("foobar", s)
                 close(io)
             end
 
@@ -72,7 +73,7 @@ include("helpers.jl")
                 io = Syslog(ip"127.0.0.1", 8080; tcp=true)
                 println(io, "info", "foobar")
                 s = fetch(r)
-                @test contains(s, "foobar")
+                @test occursin("foobar", s)
                 flush(io)
                 close(io)
             end
@@ -94,7 +95,6 @@ include("helpers.jl")
                 io = Syslog(ip"127.0.0.1", 8080; tcp=true)
                 close(io)
                 log(io, "info", "foobar\n")
-                println(typeof(io.socket))
                 flush(io)
                 close(io)
                 close(serv)
