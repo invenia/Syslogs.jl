@@ -1,7 +1,7 @@
 using Compat.Test
 using Syslogs
 
-using Sockets
+using Compat.Sockets
 import Compat.Libdl
 using Compat.Distributed
 using Compat: replace

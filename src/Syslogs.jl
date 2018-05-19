@@ -4,7 +4,7 @@ module Syslogs
 
 export Syslog
 
-using Sockets
+using Compat.Sockets
 using Compat.Libdl: dlopen
 using Compat.Printf
 using Compat: Cvoid
