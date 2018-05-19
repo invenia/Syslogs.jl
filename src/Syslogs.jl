@@ -88,12 +88,12 @@ const FACILITIES = Dict(
 )
 
 openlog(ident::String, logopt::Integer, facility::Integer) =
-    ccall((:openlog, "libc"), Cvoid, (Ptr{UInt8}, UInt, UInt), ident, logopt, facility)
+    ccall(:openlog, Cvoid, (Ptr{UInt8}, UInt, UInt), ident, logopt, facility)
 
 syslog(priority::Integer, msg::String) =
-    ccall((:syslog, "libc"), Cvoid, (UInt, Ptr{UInt8}), priority, msg)
+    ccall(:syslog, Cvoid, (UInt, Ptr{UInt8}), priority, msg)
 
-closelog() = ccall((:closelog, "libc"), Cvoid, ())
+closelog() = ccall(:closelog, Cvoid, ())
 
 makepri(facility::Integer, priority::Integer) = (UInt(facility) << 3) | UInt(priority)
 

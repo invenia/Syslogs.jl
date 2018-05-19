@@ -1,5 +1,3 @@
-const LIBC = Libdl.dlopen("libc")
-
 exists(lib::Ptr, sym::Symbol) = Libdl.dlsym_e(lib, sym) != C_NULL
 
 # https://github.com/JuliaLang/julia/pull/25646/
