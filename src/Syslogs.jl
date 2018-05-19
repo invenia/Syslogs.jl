@@ -4,10 +4,9 @@ module Syslogs
 
 export Syslog
 
+using Compat
 using Compat.Sockets
-using Compat.Libdl: dlopen
 using Compat.Printf
-using Compat: Cvoid
 using Nullables
 
 # Default UDP and TCP ports

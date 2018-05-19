@@ -1,10 +1,9 @@
-using Compat.Test
 using Syslogs
-
+using Compat
+using Compat.Test
 using Compat.Sockets
 import Compat.Libdl
 using Compat.Distributed
-using Compat: replace
 using Base: BufferStream
 using TestSetExtensions
 
