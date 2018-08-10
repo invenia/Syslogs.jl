@@ -7,8 +7,10 @@ using Compat.Distributed
 using Base: BufferStream
 using TestSetExtensions
 
-eval(Syslogs, Meta.parse("UDP_PORT = 8080"))
-eval(Syslogs, Meta.parse("TCP_PORT = 8080"))
+@eval const $(Symbol("@schedule")) = getfield(Base, Symbol("@async"))
+
+Core.eval(Syslogs, Meta.parse("UDP_PORT = 8080"))
+Core.eval(Syslogs, Meta.parse("TCP_PORT = 8080"))
 
 include("helpers.jl")
 
