@@ -4,10 +4,8 @@ module Syslogs
 
 export Syslog
 
-using Compat
-using Compat.Sockets
-using Compat.Printf
-using Nullables
+using Sockets
+using Printf
 
 # Default UDP and TCP ports
 const UDP_PORT = 514
@@ -103,14 +101,14 @@ makepri(facility::Integer, priority::Integer) = (UInt(facility) << 3) | UInt(pri
 `Syslog` handles writing logs to local (libc inteface) and remote (UDP / TCP sockets) syslog servers.
 
 # Fields
-# `address::Nullable{Tuple{IPAddr, Int}}`: The host and ip for the remote servers. Logs locally if null.
+* `address::Union{Tuple{IPAddr, Int}, Nothing}`: The host and ip for the remote servers. Logs locally if `nothing`.
 * `facility::Symbol`: The syslog facility to write to (e.g., :local0, :ft, :daemon, etc) (defaults to :user)
-* `socket::Nullable{Base.LibuvStream`: A UDP or TCP socket for logging messages. Logs locally if null.
+* `socket::Union{Base.LibuvStream, Nothing}`: A UDP or TCP socket for logging messages. Logs locally if `nothing`.
 """
 mutable struct Syslog <: IO
-    address::Nullable{Tuple{IPAddr, Int}}
+    address::Union{Tuple{IPAddr, Int}, Nothing}
     facility::Symbol
-    socket::Nullable{Base.LibuvStream}
+    socket::Union{Base.LibuvStream, Nothing}
 end
 
 Syslog(host::IPAddr, port::Int, facility::Symbol=:user; tcp::Bool=false) =
@@ -119,8 +117,7 @@ Syslog(host::IPAddr, port::Int, facility::Symbol=:user; tcp::Bool=false) =
 Syslog(host::IPAddr, facility::Symbol=:user; tcp::Bool=false) =
     Syslog(host, tcp ? TCP_PORT : UDP_PORT, facility; tcp=tcp)
 
-Syslog(facility::Symbol=:user) =
-    Syslog(Nullable{Tuple{IPAddr, Int}}(), facility, Nullable{Base.LibuvStream}())
+Syslog(facility::Symbol=:user) = Syslog(nothing, facility, nothing)
 
 """
     println(::Syslog, ::AbstractString, ::AbstractString)
@@ -136,8 +133,8 @@ function Base.println(io::Syslog, level::Symbol, msg::String)
     haskey(LEVELS, level) || throw(ArgumentError("Invalid logging level: $level."))
     haskey(FACILITIES, io.facility) || throw(ArgumentError("Invalid logging facility: $(io.facility)."))
 
-    if !isnull(io.socket)
-        sock = get(io.socket)
+    if io.socket !== nothing
+        sock = io.socket
 
         if !(isa(sock, UDPSocket) || isa(sock, TCPSocket))
             throw(ArgumentError("Syslog only supports UDP or TCP sockets."))
@@ -146,11 +143,11 @@ function Base.println(io::Syslog, level::Symbol, msg::String)
 
     pri = makepri(FACILITIES[io.facility], LEVELS[level])
 
-    if isnull(io.socket) && isnull(io.address)
+    if io.socket === nothing && io.address === nothing
         syslog(pri, msg)
     else
-        sock = get(io.socket)
-        addr = get(io.address)
+        sock = io.socket
+        addr = io.address
         content = @sprintf("<%d>%s\0", pri, msg)
 
         if isa(sock, UDPSocket)
@@ -173,14 +170,14 @@ end
 Base.log(io::Syslog, args...) = println(io, args...)
 
 function Base.flush(io::Syslog)
-    if !isnull(io.socket) && isa(get(io.socket), TCPSocket)
-        flush(get(io.socket))
+    if io.socket !== nothing && isa(io.socket, TCPSocket)
+        flush(io.socket)
     end
 end
 
 function Base.close(io::Syslog)
-    if !isnull(io.socket)
-        close(get(io.socket))
+    if io.socket !== nothing
+        close(io.socket)
     end
 end
 
