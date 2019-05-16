@@ -1,10 +1,8 @@
 using Syslogs
-using Compat
-using Compat.Test
-using Compat.Sockets
-import Compat.Libdl
-using Compat.Distributed
-using Compat: @info
+using Test
+using Sockets
+import Libdl
+using Distributed
 using Base: BufferStream
 
 @eval Syslogs begin

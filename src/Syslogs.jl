@@ -4,9 +4,8 @@ module Syslogs
 
 export Syslog
 
-using Compat
-using Compat.Sockets
-using Compat.Printf
+using Sockets
+using Printf
 using Nullables
 
 # Default UDP and TCP ports
