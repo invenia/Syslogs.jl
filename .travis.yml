@@ -17,14 +17,12 @@ after_success:
   # push coverage results to CodeCov
   - |
     julia -e '
-      VERSION >= v"0.7.0-DEV.3656" && using Pkg
-      VERSION >= v"0.7.0-DEV.5183" || cd(Pkg.dir("Syslogs"))
-      Pkg.add("Syslogs"); using Coverage
+      using Pkg
+      Pkg.add("Coverage"); using Coverage
       Codecov.submit(process_folder())'
   # build documentation
   - |
     julia -e '
-      VERSION >= v"0.7.0-DEV.3656" && using Pkg
-      VERSION >= v"0.7.0-DEV.5183" || cd(Pkg.dir("Syslogs"))
+      using Pkg
       Pkg.add("Documenter")
       include(joinpath("docs", "make.jl"))'
