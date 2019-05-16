@@ -11,18 +11,15 @@ matrix:
   fast_finish: true
   allow_failures:
     - julia: nightly
+  include:
+    - stage: "Documentation"
+      julia: 1.0
+      os: linux
+      script:
+        - julia --project=docs/ -e 'using Pkg; Pkg.instantiate(); Pkg.build()'
+        - julia --project=docs/ docs/make.jl
+      after_success: skip
 notifications:
   email: false
 after_success:
-  # push coverage results to CodeCov
-  - |
-    julia -e '
-      using Pkg
-      Pkg.add("Coverage"); using Coverage
-      Codecov.submit(process_folder())'
-  # build documentation
-  - |
-    julia -e '
-      using Pkg
-      Pkg.add("Documenter")
-      include(joinpath("docs", "make.jl"))'
+  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
