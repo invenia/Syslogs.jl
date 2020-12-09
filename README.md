@@ -1,7 +1,7 @@
 # Syslogs
 [![stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://invenia.github.io/Syslogs.jl/stable)
 [![latest](https://img.shields.io/badge/docs-latest-blue.svg)](https://invenia.github.io/Syslogs.jl/latest)
-[![Build Status](https://travis-ci.org/invenia/Syslogs.jl.svg?branch=master)](https://travis-ci.org/invenia/Syslogs.jl)
+[![CI](https://github.com/Invenia/Syslogs.jl/workflows/CI/badge.svg)](https://github.com/Invenia/Syslogs.jl/actions?query=workflow%3ACI)
 [![codecov](https://codecov.io/gh/invenia/Syslogs.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/invenia/Syslogs.jl)
 
 ## Installation
@@ -22,7 +22,7 @@ io = Syslog()
 println(io, :info, "Hello World!")
 ```
 
-To log to a remote server you can pass the remote ip address and port to the `Syslog` constructor. 
+To log to a remote server you can pass the remote ip address and port to the `Syslog` constructor.
 
 ```julia
 # Create our Syslog IO type which logs to a remote syslog service with the specified `ipaddr` and `port` via TCP.
